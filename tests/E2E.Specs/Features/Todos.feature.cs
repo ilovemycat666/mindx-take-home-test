@@ -111,24 +111,27 @@ namespace E2E.Specs.Features
   this.FeatureBackground();
 #line hidden
 #line 7
-    testRunner.Given("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 8
-    testRunner.When("I add a todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 9
-    testRunner.Then("I should see \"Buy milk\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.When("I add a todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 10
-    testRunner.When("I complete the todo \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.Then("I should see \"Buy milk\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 11
-    testRunner.Then("the todo \"Buy milk\" should appear completed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.When("I complete the todo \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 12
-    testRunner.When("I delete the todo \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.Then("the todo \"Buy milk\" should appear completed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 13
+    testRunner.When("I delete the todo \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 14
     testRunner.Then("I should not see \"Buy milk\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -147,7 +150,7 @@ namespace E2E.Specs.Features
                     "e2e"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add a todo (happy path)", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 16
+#line 17
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -160,14 +163,479 @@ namespace E2E.Specs.Features
 #line 3
   this.FeatureBackground();
 #line hidden
-#line 17
-    testRunner.Given("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
 #line 18
-    testRunner.When("I add a todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 19
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 20
+    testRunner.When("I add a todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 21
     testRunner.Then("I should see \"Buy milk\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Create todo with priority, due date, and tags")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Create todo with priority, due date, and tags")]
+        [Xunit.TraitAttribute("Category", "smoke")]
+        public void CreateTodoWithPriorityDueDateAndTags()
+        {
+            string[] tagsOfScenario = new string[] {
+                    "smoke"};
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create todo with priority, due date, and tags", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 24
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 25
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 26
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                            "priority",
+                            "dueDate",
+                            "tags"});
+                table1.AddRow(new string[] {
+                            "High",
+                            "+3d",
+                            "work,urgent"});
+#line 27
+    testRunner.When("I create a todo titled \"Priority Task\" with:", ((string)(null)), table1, "When ");
+#line hidden
+#line 30
+    testRunner.Then("I should see \"Priority Task\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 31
+    testRunner.And("I should see \"Priority Task\" with priority \"High\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 32
+    testRunner.And("it should show a due date within 3 days", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Overdue todo shows Overdue indicator")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Overdue todo shows Overdue indicator")]
+        public void OverdueTodoShowsOverdueIndicator()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Overdue todo shows Overdue indicator", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 34
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 35
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title",
+                            "priority",
+                            "dueDate"});
+                table2.AddRow(new string[] {
+                            "Overdue Task",
+                            "Medium",
+                            "-1d"});
+#line 36
+    testRunner.And("I seed todos:", ((string)(null)), table2, "And ");
+#line hidden
+#line 39
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 40
+    testRunner.Then("the todo \"Overdue Task\" should show as overdue", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Edit title successfully")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Edit title successfully")]
+        public void EditTitleSuccessfully()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit title successfully", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 42
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 43
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table3.AddRow(new string[] {
+                            "Old Title"});
+#line 44
+    testRunner.And("I seed todos:", ((string)(null)), table3, "And ");
+#line hidden
+#line 47
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 48
+    testRunner.When("I edit \"Old Title\" to title \"New Title\" and notes \"\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 49
+    testRunner.Then("I should see \"New Title\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 50
+    testRunner.And("I should not see \"Old Title\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Duplicate title shows error on create")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Duplicate title shows error on create")]
+        public void DuplicateTitleShowsErrorOnCreate()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Duplicate title shows error on create", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 52
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 53
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table4.AddRow(new string[] {
+                            "Buy milk"});
+#line 54
+    testRunner.And("I seed todos:", ((string)(null)), table4, "And ");
+#line hidden
+#line 57
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 58
+    testRunner.When("I try to add a todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 59
+    testRunner.Then("I should see an alert containing \"Duplicate\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 60
+    testRunner.And("I should see exactly 1 todo titled \"Buy milk\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Filter by single priority shows only matching todos")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Filter by single priority shows only matching todos")]
+        public void FilterBySinglePriorityShowsOnlyMatchingTodos()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Filter by single priority shows only matching todos", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 62
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 63
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title",
+                            "priority"});
+                table5.AddRow(new string[] {
+                            "High Task",
+                            "High"});
+                table5.AddRow(new string[] {
+                            "Medium Task",
+                            "Medium"});
+                table5.AddRow(new string[] {
+                            "Low Task",
+                            "Low"});
+#line 64
+    testRunner.And("I seed todos:", ((string)(null)), table5, "And ");
+#line hidden
+#line 69
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 70
+    testRunner.When("I set filter Priority to \"High\" and Status to \"All\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table6.AddRow(new string[] {
+                            "High Task"});
+#line 71
+    testRunner.Then("I should see exactly:", ((string)(null)), table6, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Filter by completed status shows only completed todos")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Filter by completed status shows only completed todos")]
+        public void FilterByCompletedStatusShowsOnlyCompletedTodos()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Filter by completed status shows only completed todos", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 75
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 76
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table7.AddRow(new string[] {
+                            "Item A"});
+                table7.AddRow(new string[] {
+                            "Item B"});
+#line 77
+    testRunner.And("I seed todos:", ((string)(null)), table7, "And ");
+#line hidden
+#line 81
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 82
+    testRunner.When("I complete the todo \"Item A\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 83
+    testRunner.And("I set filter Priority to \"High,Medium,Low\" and Status to \"Completed\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table8.AddRow(new string[] {
+                            "Item A"});
+#line 84
+    testRunner.Then("I should see exactly:", ((string)(null)), table8, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Sort by due date shows soonest first")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Sort by due date shows soonest first")]
+        public void SortByDueDateShowsSoonestFirst()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sort by due date shows soonest first", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 88
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 89
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title",
+                            "dueDate"});
+                table9.AddRow(new string[] {
+                            "Later",
+                            "+5d"});
+                table9.AddRow(new string[] {
+                            "Sooner",
+                            "+1d"});
+                table9.AddRow(new string[] {
+                            "Soonest",
+                            "+0d"});
+#line 90
+    testRunner.And("I seed todos:", ((string)(null)), table9, "And ");
+#line hidden
+#line 95
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 96
+    testRunner.When("I sort by due date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table10.AddRow(new string[] {
+                            "Soonest"});
+                table10.AddRow(new string[] {
+                            "Sooner"});
+                table10.AddRow(new string[] {
+                            "Later"});
+#line 97
+    testRunner.Then("I should see exactly:", ((string)(null)), table10, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Bulk complete marks all selected todos as done")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Bulk complete marks all selected todos as done")]
+        public void BulkCompleteMarksAllSelectedTodosAsDone()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Bulk complete marks all selected todos as done", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 103
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 104
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table11.AddRow(new string[] {
+                            "Item A"});
+                table11.AddRow(new string[] {
+                            "Item B"});
+#line 105
+    testRunner.And("I seed todos:", ((string)(null)), table11, "And ");
+#line hidden
+#line 109
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 110
+    testRunner.When("I select all todos", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 111
+    testRunner.And("I apply bulk action \"complete\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 112
+    testRunner.Then("both items should appear completed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Bulk delete removes all selected todos")]
+        [Xunit.TraitAttribute("FeatureTitle", "Todos E2E")]
+        [Xunit.TraitAttribute("Description", "Bulk delete removes all selected todos")]
+        public void BulkDeleteRemovesAllSelectedTodos()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Bulk delete removes all selected todos", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 114
+  this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 3
+  this.FeatureBackground();
+#line hidden
+#line 115
+    testRunner.Given("I reset data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+                TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                            "title"});
+                table12.AddRow(new string[] {
+                            "Remove 1"});
+                table12.AddRow(new string[] {
+                            "Remove 2"});
+#line 116
+    testRunner.And("I seed todos:", ((string)(null)), table12, "And ");
+#line hidden
+#line 120
+    testRunner.And("I open the Todos page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 121
+    testRunner.When("I select all todos", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 122
+    testRunner.And("I apply bulk action \"delete\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 123
+    testRunner.Then("I should not see \"Remove 1\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 124
+    testRunner.And("I should not see \"Remove 2\" in the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

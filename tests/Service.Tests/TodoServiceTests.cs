@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Xunit;
@@ -77,7 +78,7 @@ public class TodoServiceTests
         created.Tags.Should().Contain("alpha");
         created.Tags.Should().Contain("b-d-tag");             // sanitized
         created.Tags.Should().Contain("UPPER");
-        created.Tags.Should().Contain("loooooooooooooooooo"); // trimmed to 20
+        created.Tags.Should().Contain("looooooooooooooooooo"); // trimmed to 20
         created.Tags.Should().Contain("ok-1");
     }
 
@@ -130,5 +131,140 @@ public class TodoServiceTests
 
         Action act = () => svc.Delete(t.Id);
         act.Should().Throw<InvalidOperationException>().WithMessage("*Locked*");
+    }
+
+    // --- Validation ---
+
+    [Fact]
+    public void Add_EmptyTitle_Throws()
+    {
+        var svc = NewSvc(out _);
+        Action emptyStr = () => svc.Add(new TodoCreate("", null, null, null, null));
+        Action whitespace = () => svc.Add(new TodoCreate("   ", null, null, null, null));
+        emptyStr.Should().Throw<ArgumentException>().WithMessage("*Title required*");
+        whitespace.Should().Throw<ArgumentException>().WithMessage("*Title required*");
+    }
+
+    [Fact]
+    public void Add_Notes_TruncatedAt500Chars()
+    {
+        var svc = NewSvc(out _);
+        var longNotes = new string('x', 600);
+        var t = svc.Add(new TodoCreate("Note test", null, null, null, longNotes));
+        t.Notes.Length.Should().Be(500);
+    }
+
+    // --- Idempotency ---
+
+    [Fact]
+    public void Complete_IsIdempotent()
+    {
+        var svc = NewSvc(out _);
+        var t = svc.Add(new TodoCreate("Do twice", null, null, null, null));
+        var first = svc.Complete(t.Id);
+        var second = svc.Complete(t.Id);
+        first.Completed.Should().BeTrue();
+        second.Completed.Should().BeTrue();
+        second.Id.Should().Be(first.Id);
+    }
+
+    [Fact]
+    public void Uncomplete_IsIdempotent()
+    {
+        var svc = NewSvc(out _);
+        var t = svc.Add(new TodoCreate("Toggle test", null, null, null, null));
+        svc.Complete(t.Id);
+        var first = svc.Uncomplete(t.Id);
+        var second = svc.Uncomplete(t.Id);
+        first.Completed.Should().BeFalse();
+        second.Completed.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Complete_Then_Uncomplete_IsReversible()
+    {
+        var svc = NewSvc(out _);
+        var t = svc.Add(new TodoCreate("Reversible", null, null, null, null));
+        svc.Complete(t.Id).Completed.Should().BeTrue();
+        svc.Uncomplete(t.Id).Completed.Should().BeFalse();
+        svc.Complete(t.Id).Completed.Should().BeTrue();
+    }
+
+    // --- Update edge cases ---
+
+    [Fact]
+    public void Update_SameTitle_IsAllowed()
+    {
+        var svc = NewSvc(out _);
+        var t = svc.Add(new TodoCreate("Same Title", null, null, null, null));
+        Action act = () => svc.Update(t.Id, new TodoUpdate(Title: "Same Title", null, null, null, null));
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void Update_NonExistent_Throws()
+    {
+        var svc = NewSvc(out _);
+        Action act = () => svc.Update(Guid.NewGuid(), new TodoUpdate(Title: "X", null, null, null, null));
+        act.Should().Throw<KeyNotFoundException>();
+    }
+
+    // --- Query / search / sort ---
+
+    [Fact]
+    public void Query_SearchByTitle_ReturnsMatch()
+    {
+        var svc = NewSvc(out _);
+        svc.Add(new TodoCreate("Buy groceries", null, null, null, null));
+        svc.Add(new TodoCreate("Call dentist", null, null, null, null));
+
+        var res = svc.Query("grocer", null, StatusFilter.All, null, null, SortKey.None).ToList();
+
+        res.Should().ContainSingle().Which.Title.Should().Be("Buy groceries");
+    }
+
+    [Fact]
+    public void Query_SearchByTag_ReturnsMatch()
+    {
+        var svc = NewSvc(out _);
+        svc.Add(new TodoCreate("Tagged item", null, null, new[] { "urgent" }, null));
+        svc.Add(new TodoCreate("Untagged item", null, null, null, null));
+
+        var res = svc.Query("urgent", null, StatusFilter.All, null, null, SortKey.None).ToList();
+
+        res.Should().ContainSingle().Which.Title.Should().Be("Tagged item");
+    }
+
+    [Fact]
+    public void Query_SortByPriority_OrdersHighFirst()
+    {
+        var svc = NewSvc(out _);
+        svc.Add(new TodoCreate("Low item", Priority.Low, null, null, null));
+        svc.Add(new TodoCreate("High item", Priority.High, null, null, null));
+        svc.Add(new TodoCreate("Medium item", Priority.Medium, null, null, null));
+
+        var res = svc.Query(null, null, StatusFilter.All, null, null, SortKey.Priority).ToList();
+
+        res.Select(t => t.Priority).Should().Equal(Priority.High, Priority.Medium, Priority.Low);
+    }
+
+    // --- Bulk edge cases ---
+
+    [Fact]
+    public void Bulk_EmptyIds_ReturnsZeroCounts()
+    {
+        var svc = NewSvc(out _);
+        var result = svc.Bulk(new BulkRequest("complete", Array.Empty<Guid>()));
+        result.Requested.Should().Be(0);
+        result.Succeeded.Should().Be(0);
+        result.Failed.Should().Be(0);
+    }
+
+    [Fact]
+    public void Delete_NotFound_Throws()
+    {
+        var svc = NewSvc(out _);
+        Action act = () => svc.Delete(Guid.NewGuid());
+        act.Should().Throw<KeyNotFoundException>();
     }
 }

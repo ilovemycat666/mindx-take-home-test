@@ -95,6 +95,9 @@ public class AdvancedTodosSteps
         var id = await api.TryGetIdByTitleAsync(oldTitle) ?? throw new Exception("Item not found");
         await api.UpdateAsync(id, new TodoUpdateReq(Title: newTitle, Notes: notes));
 
+        // Refresh so the frontend picks up the API change
+        Driver.Navigate().Refresh();
+        Wait.Until(d => d.FindElements(By.CssSelector("#list li")).Any());
         WaitForRow(newTitle);
     }
 
@@ -128,8 +131,22 @@ public class AdvancedTodosSteps
     [When(@"I apply bulk action ""(.*)""")]
     public void WhenIApplyBulkAction(string op)
     {
-        Click(op.Equals("complete", StringComparison.OrdinalIgnoreCase) ? "#bulk-complete" : "#bulk-delete");
-        Wait.Until(_ => true);
+        if (op.Equals("complete", StringComparison.OrdinalIgnoreCase))
+        {
+            Click("#bulk-complete");
+            // Wait until every visible todo label shows the completed prefix
+            Wait.Until(d =>
+            {
+                var labels = d.FindElements(By.CssSelector("[data-testid='todo-label']"));
+                return labels.Count > 0 && labels.All(e => SafeText(e).StartsWith("✅ "));
+            });
+        }
+        else
+        {
+            Click("#bulk-delete");
+            // Wait until the list is empty
+            Wait.Until(d => !d.FindElements(By.CssSelector("[data-testid='todo-label']")).Any());
+        }
     }
 
     // ---------- Assertions ----------
@@ -177,9 +194,77 @@ public class AdvancedTodosSteps
     public void ThenIShouldSeeExactly(Table table)
     {
         var expected = table.Rows.Select(r => r.Values.First().Trim()).ToList();
+
+        // After a filter/sort the list re-renders asynchronously: old elements go stale and
+        // new ones are appended.  Wait until the DOM settles to exactly the expected count
+        // with all labels readable before asserting.
+        Wait.Until(d =>
+        {
+            var els = d.FindElements(By.CssSelector("[data-testid='todo-label']"));
+            return els.Count == expected.Count && els.All(e => !string.IsNullOrEmpty(SafeText(e)));
+        });
+
         var actual = Driver.FindElements(By.CssSelector("[data-testid='todo-label']"))
                            .Select(SafeText).Select(t => t.Replace("✅ ", "")).ToList();
         actual.Should().Equal(expected);
+    }
+
+    // ---------- Additional steps ----------
+
+    [When(@"I try to add a todo titled ""(.*)""")]
+    public void WhenITryToAddATodoTitled(string title)
+    {
+        Type("#title", title);
+        Click("[data-testid='add-btn']");
+    }
+
+    [Then(@"I should see an alert containing ""(.*)""")]
+    public void ThenIShouldSeeAnAlertContaining(string expected)
+    {
+        var alert = Wait.Until(d =>
+        {
+            try { return d.SwitchTo().Alert(); }
+            catch (OpenQA.Selenium.NoAlertPresentException) { return null; }
+        });
+        alert!.Text.Should().Contain(expected);
+        alert.Accept();
+    }
+
+    [Then(@"I should see exactly (\d+) todo titled ""(.*)""")]
+    public void ThenIShouldSeeExactlyNTodoTitled(int count, string title)
+    {
+        var matches = Driver.FindElements(By.CssSelector("[data-testid='todo-label']"))
+                            .Select(SafeText)
+                            .Where(t => t.Replace("✅ ", "").Equals(title, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+        matches.Count.Should().Be(count);
+    }
+
+    [Then(@"the todo ""(.*)"" should show as overdue")]
+    public void ThenTheTodoShouldShowAsOverdue(string title)
+    {
+        var row = FindRow(title);
+        var chip = row.FindElement(By.CssSelector(".chip"));
+        chip.Text.Should().Contain("Overdue");
+    }
+
+    [When(@"I sort by due date")]
+    public void WhenISortByDueDate()
+    {
+        new SelectElement(Driver.FindElement(By.CssSelector("#sort"))).SelectByValue("due");
+        Click("#apply");
+        // Wait for list to repopulate after async fetch.
+        // The subsequent ThenIShouldSeeExactly step waits for the exact count + readable text,
+        // so no sleep is needed here.
+        Wait.Until(d => d.FindElements(By.CssSelector("#list li")).Any());
+    }
+
+    [When(@"I select all todos")]
+    public void WhenISelectAllTodos()
+    {
+        Wait.Until(d => d.FindElements(By.CssSelector("input[type='checkbox'][data-id]")).Any());
+        foreach (var cb in Driver.FindElements(By.CssSelector("input[type='checkbox'][data-id]")))
+            if (!cb.Selected) cb.Click();
     }
 
     // ---------- Helpers ----------
@@ -217,7 +302,11 @@ public class AdvancedTodosSteps
 
     private void SetDate(string css, DateTime date)
     {
-        Driver.FindElement(By.CssSelector(css)).SendKeys(date.ToString("yyyy-MM-dd"));
+        // Chrome date inputs have separate month/day/year segments; SendKeys is unreliable.
+        // Use JavaScript to set .value directly so the frontend reads the correct string.
+        var el = Driver.FindElement(By.CssSelector(css));
+        ((OpenQA.Selenium.IJavaScriptExecutor)Driver)
+            .ExecuteScript("arguments[0].value = arguments[1];", el, date.ToString("yyyy-MM-dd"));
     }
 
     private IWebElement FindRow(string title)
